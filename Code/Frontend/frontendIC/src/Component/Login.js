@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,25 @@ import {
   TextInput
 } from "react-native";
 
+
 function Login(props) {
+    //snipet from https://github.com/IsAmitprajapati/Login-Register---MERN-Stack-MongoDB-express-React-js-Nodejs---2022/blob/main/frontend/src/Component/Login.js
+
+  const [user, setUser] = useState({
+    email: "",
+    password: ""
+})
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setUser((preve) => {
+      return {
+          ...preve,
+          [name]: value
+      }
+  })
+}
+
   return (
     <View style={styles.container}>
       <View style={styles.backgroudimageStack}>
@@ -24,6 +42,8 @@ function Login(props) {
             <TextInput
               placeholder="E-mail"
               style={styles.predefinedemailtext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
             ></TextInput>
           </View>
           <TextInput
@@ -35,6 +55,9 @@ function Login(props) {
             <TextInput
               placeholder="Parola"
               style={styles.predefinedpasstext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
+              secureTextEntry={true}
             ></TextInput>
           </View>
           <View style={styles.group1}>
@@ -97,9 +120,9 @@ const styles = StyleSheet.create({
     marginLeft: 65
   },
   predefinedemailtext: {
-    color: "rgba(187,187,187,1)",
+    color: "#121212",
     fontSize: 20,
-    width: 77,
+    width: 210,
     height: 25,
     marginTop: 6,
     marginLeft: 9
@@ -120,9 +143,9 @@ const styles = StyleSheet.create({
     marginLeft: 65
   },
   predefinedpasstext: {
-    color: "rgba(187,187,187,1)",
+    color: "#121212",
     fontSize: 20,
-    width: 77,
+    width: 210,
     height: 25,
     marginTop: 6,
     marginLeft: 9
