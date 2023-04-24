@@ -5,11 +5,12 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput
+  TextInput,
 } from "react-native";
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-function Login(props) {
+function Login({navigation}) {
     //snipet from https://github.com/IsAmitprajapati/Login-Register---MERN-Stack-MongoDB-express-React-js-Nodejs---2022/blob/main/frontend/src/Component/Login.js
 
   const [user, setUser] = useState({
@@ -28,103 +29,99 @@ const handleChange = (e) => {
 }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.backgroudimageStack}>
-        <ImageBackground
-          source={require("../../public/Background.jpg")}
-          resizeMode="repeat"
-          style={styles.backgroudimage}
-          imageStyle={styles.backgroudimage_imageStyle}
-        >
-          <Text style={styles.title}>Autentificare</Text>
-          <Text style={styles.emaillabel}>E-mail</Text>
-          <View style={styles.emailbox}>
-            <TextInput
-              placeholder="E-mail"
-              style={styles.predefinedemailtext}
-              placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
-            ></TextInput>
-          </View>
-          <TextInput
-            placeholder="Parola"
-            placeholderTextColor="rgba(0,0,0,1)"
-            style={styles.passlabel}
-          ></TextInput>
-          <View style={styles.passbox}>
-            <TextInput
-              placeholder="Parola"
-              style={styles.predefinedpasstext}
-              placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
-              secureTextEntry={true}
-            ></TextInput>
-          </View>
-          <View style={styles.group1}>
-            <View style={styles.buttonbox}>
-              <View style={styles.group2}>
-                <Text style={styles.buttonlabel}>Autentificare</Text>
+    <KeyboardAwareScrollView
+      style={{ backgroundColor: '#fff' }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
+      contentContainerStyle={styles.container}
+      scrollEnabled={false}
+    >
+      <View style={styles.container}>
+        <View style={styles.backgroudimageStack}>
+            <Text style={styles.title}>Login</Text>
+            <Text style={styles.emaillabel}>E-mail</Text>
+            <View style={styles.emailbox}>
+              <TextInput
+                placeholder="E-mail"
+                returnKeyType="next"
+                onSubmitEditing={() => this.passwordRef.focus()}
+                style={styles.predefinedemailtext}
+                placeholderTextColor="rgba(187,187,187,1)"
+                onChange={handleChange}
+              ></TextInput>
+            </View>
+            <Text style={styles.passlabel}> Password</Text>
+            <View style={styles.passbox}>
+              <TextInput
+                placeholder="Password"
+                ref={passwordRef => (this.passwordRef = passwordRef)}
+                returnKeyType="done"
+                autoCorrect={false}
+                style={styles.predefinedpasstext}
+                placeholderTextColor="rgba(187,187,187,1)"
+                onChange={handleChange}
+                secureTextEntry={true}
+              ></TextInput>
+            </View>
+            <View style={styles.group1}>
+              <View style={styles.buttonbox}>
+                <View style={styles.group2}>
+                  <Text style={styles.buttonlabel}>Login</Text>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={styles.questionRow}>
-            <Text style={styles.question}>Nu ai cont?</Text>
-            <Text style={styles.gotoregister}>Înregistrează-te acum!</Text>
-          </View>
-        </ImageBackground>
-        <Image
-          source={require("../../public/Logo.jpeg")}
-          resizeMode="contain"
-          style={styles.logo}
-        ></Image>
+            <View style={styles.questionRow}>
+              <Text style={styles.question}>Don't have account?</Text>
+              <Text style={styles.gotoregister} onPress={() => navigation.navigate('Register')}>Register now!</Text>
+            </View>
+          <Image
+            source={require("../../public/Logo.jpeg")}
+            resizeMode="contain"
+            style={styles.logo}
+          ></Image>
+        </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
+
+    
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "rgba(166,166,166,1)"
-  },
-  backgroudimage: {
-    width: 375,
-    height: 667,
-    position: "absolute",
-    top: 36,
-    left: 12
+    backgroundColor: "#FFFFFF"
   },
   backgroudimage_imageStyle: {},
   title: {
     color: "#121212",
     fontSize: 32,
-    width: 304,
+    width: 390,
     height: 62,
     textAlign: "center",
-    marginTop: 173,
-    marginLeft: 45
+    marginTop: 110
   },
   emaillabel: {
     color: "#121212",
     fontSize: 24,
     width: 114,
     height: 34,
-    marginTop: 15,
-    marginLeft: 10
+    marginTop: 30,
+    marginLeft: 30
   },
   emailbox: {
-    width: 229,
+    width: 260,
     height: 37,
     backgroundColor: "#E6E6E6",
-    marginTop: 6,
-    marginLeft: 65
+    marginTop: 3,
+    marginLeft: 65,
+    alignContent: 'center'
   },
   predefinedemailtext: {
     color: "#121212",
     fontSize: 20,
     width: 210,
     height: 25,
-    marginTop: 6,
+    marginTop: 5,
     marginLeft: 9
   },
   passlabel: {
@@ -133,14 +130,16 @@ const styles = StyleSheet.create({
     width: 114,
     height: 34,
     marginTop: 13,
-    marginLeft: 10
+    marginLeft: 30,
+    marginTop:20
   },
   passbox: {
-    width: 229,
+    width: 260,
     height: 37,
     backgroundColor: "#E6E6E6",
-    marginTop: 6,
-    marginLeft: 65
+    marginTop: 3,
+    marginLeft: 65,
+    alignContent: 'center'
   },
   predefinedpasstext: {
     color: "#121212",
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     marginLeft: 9
   },
   group1: {
-    width: 130,
+    width: 150,
     height: 37,
     marginTop: 51,
     marginLeft: 122
@@ -159,7 +158,10 @@ const styles = StyleSheet.create({
   buttonbox: {
     width: 130,
     height: 37,
-    backgroundColor: "rgba(208,2,27,1)"
+    backgroundColor: "rgba(208,2,27,1)",
+    marginTop: 20,
+    alignContent: "center",
+    marginLeft: 10
   },
   group2: {
     width: 111,
@@ -169,24 +171,25 @@ const styles = StyleSheet.create({
   },
   buttonlabel: {
     color: "rgba(255,255,255,1)",
-    fontSize: 20
+    fontSize: 20,
+    textAlign: "center"
   },
   question: {
-    color: "rgba(255,255,255,1)",
+    color: "#000000",
     fontSize: 18,
-    marginTop: 101,
-    marginLeft: 132
+    marginTop: 105,
+    textAlign: "center"
   },
   gotoregister: {
-    color: "rgba(255,255,255,1)",
+    color: "#E00001",
     fontSize: 18,
-    marginLeft: 91
+    marginTop: 5,
+    textAlign: "center"
   },
   logo: {
-    top: 0,
-    left: 0,
-    width: 251,
-    height: 209,
+    left: 10,
+    width: 90,
+    height: 120,
     position: "absolute"
   },
   backgroudimageStack: {

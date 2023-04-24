@@ -5,11 +5,13 @@ import {
   Image,
   ImageBackground,
   Text,
-  TextInput
+  TextInput,
+  Button
 } from "react-native";
 
-function Register(props) {
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
+function Register() {
 const [user, setUser] = useState({
   name: "",
   email: "",
@@ -28,150 +30,132 @@ const handleChange = (e) => {
 }
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("../../public/Background.jpg")}
-        resizeMode="repeat"
-        style={styles.backgroudimage1}
-        imageStyle={styles.backgroudimage1_imageStyle}
-      >
-        <View style={styles.logoStack}>
-          <Image
-            source={require("../../public/Logo.jpeg")}
-            resizeMode="contain"
-            style={styles.logo}
-          ></Image>
-          <TextInput
-            placeholder="Create account"
-            placeholderTextColor="rgba(0,0,0,1)"
-            style={styles.title}
-          ></TextInput>
-        </View>
-        <View style={styles.rect}>
-          <TextInput
-            placeholder="Name"
-            placeholderTextColor="rgba(0,0,0,1)"
-            style={styles.namelabel}
-          ></TextInput>
-        </View>
-        <View style={styles.namebox}>
-          <TextInput
-            placeholder="Name"
-            style={styles.predefinednametext}
-            placeholderTextColor="rgba(187,187,187,1)"
-            onChange={handleChange}
-          ></TextInput>
-        </View>
-        <View style={styles.group1}>
-          <TextInput
-            placeholder="E-mail"
-            placeholderTextColor="rgba(0,0,0,1)"
-            style={styles.emaillabel}
-          ></TextInput>
-        </View>
-        <View style={styles.emailbox}>
-          <TextInput
-            placeholder="E-mail"
-            style={styles.predefinedemailtext}
-            placeholderTextColor="rgba(187,187,187,1)"
-            onChange={handleChange}
-          ></TextInput>
-        </View>
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="rgba(0,0,0,1)"
-          style={styles.passlabel}
-        ></TextInput>
-        <View style={styles.passbox}>
-          <TextInput
-            placeholder="Password"
-            style={styles.predefinedpasstext}
-            placeholderTextColor="rgba(187,187,187,1)"
-            onChange={handleChange}
-            secureTextEntry={true}
-          ></TextInput>
-        </View>
-        <TextInput
-          placeholder="Confirm password"
-          placeholderTextColor="rgba(0,0,0,1)"
-          style={styles.confirmpasslabel}
-        ></TextInput>
-        <View style={styles.passboxconfirm}>
-          <TextInput
-            placeholder="Confirm password"
-            style={styles.predefinedpassconfirmtext}
-            placeholderTextColor="rgba(187,187,187,1)"
-            onChange={handleChange}
-            secureTextEntry={true}
-          ></TextInput>
-        </View>
-        <View style={styles.group2}>
-          <View style={styles.buttonbox}>
-            <View style={styles.group3}>
-              <TextInput
-                placeholder="Register"
-                placeholderTextColor="rgba(255,255,255,1)"
-                style={styles.buttonlabel}
-              ></TextInput>
+    <KeyboardAwareScrollView
+    style={{ backgroundColor: '#fff' }}
+    resetScrollToCoords={{ x: 0, y: 0 }}
+    contentContainerStyle={styles.container}
+    scrollEnabled={false}
+    >
+      <View style={styles.container}>
+          <View style={styles.logoStack}>
+            <Image
+              source={require("../../public/Logo.jpeg")}
+              resizeMode="contain"
+              style={styles.logo}
+            ></Image>
+            <Text style={styles.title}>Create account</Text>
+          </View>
+          <View style={styles.rect}>
+            <Text style={styles.namelabel}>Name</Text>
+          </View>
+          <View style={styles.namebox}>
+            <TextInput
+              placeholder="Name"
+              returnKeyType="next"
+              onSubmitEditing={() => this.emailRef.focus()}
+              style={styles.predefinednametext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
+            ></TextInput>
+          </View>
+          <View style={styles.group1}>
+            <Text style={styles.emaillabel}>E-mail</Text>
+          </View>
+          <View style={styles.emailbox}>
+            <TextInput
+              placeholder="E-mail"
+              ref={emailRef => (this.emailRef = emailRef)}
+              returnKeyType="next"
+              autoCorrect={false}
+              onSubmitEditing={() => this.passwordRef.focus()}
+              style={styles.predefinedemailtext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
+            ></TextInput>
+          </View>
+          <Text style={styles.passlabel}>Password</Text>
+          <View style={styles.passbox}>
+            <TextInput
+              placeholder="Password"
+              ref={passwordRef => (this.passwordRef = passwordRef)}
+              returnKeyType="next"
+              onSubmitEditing={() => this.confirmpasswordRef.focus()}
+              autoCorrect={false}
+              style={styles.predefinedpasstext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
+              secureTextEntry={true}
+            ></TextInput>
+          </View>
+          <Text style={styles.confirmpasslabel}>Confirm password</Text>
+          <View style={styles.passboxconfirm}>
+            <TextInput
+              placeholder="Confirm password"
+              ref={confirmpasswordRef => (this.confirmpasswordRef = confirmpasswordRef)}
+              returnKeyType="done"
+              autoCorrect={false}
+              style={styles.predefinedpassconfirmtext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChange={handleChange}
+              secureTextEntry={true}
+            ></TextInput>
+          </View>
+          <View style={styles.group2}>
+            <View style={styles.buttonbox}>
+              <View style={styles.group3}>
+                <Text style={styles.buttonlabel}>Register</Text>
+              </View>
             </View>
           </View>
-        </View>
-      </ImageBackground>
-    </View>
+      </View>
+    </KeyboardAwareScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: "#FFFFFF"
   },
-  backgroudimage1: {
-    width: 390,
-    height: 667
-  },
-  backgroudimage1_imageStyle: {},
-  logo: {
-    top: 0,
-    left: 0,
-    width: 113,
-    height: 96,
-    position: "absolute"
-  },
+  backgroudimage_imageStyle: {},
   title: {
-    top: 85,
-    position: "absolute",
-    color: "rgba(0,0,0,1)",
+    color: "#121212",
     fontSize: 32,
-    width: 304,
+    width: 390,
     height: 62,
     textAlign: "center",
-    left: 23
+    marginTop: 0
+  },
+  logo: {
+    width: 90,
+    height: 50
   },
   logoStack: {
-    width: 327,
+    width: 380,
     height: 127
   },
   rect: {
     width: 92,
     height: 31,
-    marginTop: 27,
     marginLeft: 21
   },
   namelabel: {
     color: "rgba(0,0,0,1)",
-    fontSize: 20,
+    fontSize: 22,
     width: 114,
-    height: 34
+    height: 34,
+    marginTop: 0
   },
   namebox: {
-    width: 229,
+    width: 270,
     height: 37,
     backgroundColor: "#E6E6E6",
-    marginLeft: 55
+    marginLeft: 55,
+    marginTop:0
   },
   predefinednametext: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 18,
     width: 211,
     height: 24,
     marginTop: 7,
@@ -185,64 +169,70 @@ const styles = StyleSheet.create({
   },
   emaillabel: {
     color: "rgba(0,0,0,1)",
-    fontSize: 20,
+    fontSize: 22,
     width: 114,
-    height: 34
+    height: 34,
+    marginTop: 5
   },
   emailbox: {
-    width: 229,
+    width: 270,
     height: 37,
     backgroundColor: "#E6E6E6",
-    marginLeft: 55
+    marginLeft: 55,
+    marginTop: 0
   },
   predefinedemailtext: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 18,
     width: 211,
     height: 24,
-    marginTop: 6,
+    marginTop: 7,
     marginLeft: 12
   },
   passlabel: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 22,
     width: 114,
     height: 34,
-    marginTop: 9,
-    marginLeft: 21
+    marginTop: 10,
+    marginLeft: 21,
   },
   passbox: {
-    width: 229,
+    width: 270,
     height: 37,
     backgroundColor: "#E6E6E6",
-    marginLeft: 55
+    marginLeft: 55,
+    fontSize: 18,
+    marginTop: 0
   },
   predefinedpasstext: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 18,
     width: 211,
     height: 25,
-    marginTop: 6,
+    marginTop: 7,
     marginLeft: 11
   },
   confirmpasslabel: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 22,
     width: 212,
     height: 34,
-    marginTop: 9,
+    marginTop: 11,
     marginLeft: 21
   },
   passboxconfirm: {
-    width: 229,
+    width: 270,
     height: 37,
     backgroundColor: "#E6E6E6",
     marginTop: 2,
-    marginLeft: 55
+    marginLeft: 55,
+    marginTop: 0,
+    fontSize: 18
   },
   predefinedpassconfirmtext: {
     color: "#121212",
-    fontSize: 20,
+    fontSize: 18,
     width: 211,
     height: 25,
     marginTop: 7,
@@ -251,14 +241,14 @@ const styles = StyleSheet.create({
   group2: {
     width: 130,
     height: 37,
-    marginTop: 79,
-    marginLeft: 107
+    marginLeft: 115,
+    marginTop: 55
   },
   buttonbox: {
     width: 130,
     height: 37,
     backgroundColor: "rgba(208,2,27,1)",
-    bottom: 10
+    alignContent: "center"
   },
   group3: {
     width: 81,
@@ -270,7 +260,8 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,1)",
     fontSize: 20,
     width: 81,
-    height: 27
+    height: 27,
+    textAlign: "center"
   }
 });
 
