@@ -6,17 +6,54 @@ import {
   ImageBackground,
   Text,
   TextInput,
+  ActivityIndicator
 } from "react-native";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-function Login({navigation}) {
-    //snipet from https://github.com/IsAmitprajapati/Login-Register---MERN-Stack-MongoDB-express-React-js-Nodejs---2022/blob/main/frontend/src/Component/Login.js
+import axios from 'axios';
 
+function Login({navigation}) {
+    
   const [user, setUser] = useState({
     email: "",
     password: ""
 })
+
+const handleLogin = async (user) =>{
+  const url = '(http://10.9.5.26:5000/api/login';
+
+  try {
+    setUser()
+    const response = await axios.post(url, {
+        "email": user.email,
+        "password": user.password,
+      });
+
+      console.log(response.data);
+      //salvare user
+      
+      console.log(response.status)
+      navigation.navigate('Register');
+    } catch (error) {
+      console.error(error);
+      
+    }
+  }
+
+  /*axios
+  .post(url, user).then((response) => {
+    alert('Succesfully conected')
+    //salvare user
+
+    navigation.navigate('Register');
+    
+  })
+  .catch(error => {
+    alert(response.status);
+    console.log(error.JSON());
+  })*/
+
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -27,6 +64,7 @@ const handleChange = (e) => {
       }
   })
 }
+
 
   return (
     <KeyboardAwareScrollView
@@ -63,9 +101,9 @@ const handleChange = (e) => {
               ></TextInput>
             </View>
             <View style={styles.group1}>
-              <View style={styles.buttonbox}>
+              <View style={styles.buttonbox} >
                 <View style={styles.group2}>
-                  <Text style={styles.buttonlabel}>Login</Text>
+                  <Text style={styles.buttonlabel} onPress={() => {handleLogin(user)}}>Login</Text>
                 </View>
               </View>
             </View>
