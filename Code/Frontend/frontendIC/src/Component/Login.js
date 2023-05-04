@@ -10,6 +10,7 @@ import {
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import axios from 'axios'
 
+
 function Login({navigation}) {
   const [user, setUser] = useState({
     email: "",
@@ -17,18 +18,32 @@ function Login({navigation}) {
   });
 
   const handleLogin = async () => {
-    const url = 'http://192.168.0.101:5000/api/login';
+    const url = 'http://172.20.10.2:5000/api/login';
     try {
+
+      if(!user.email & !user.password){
+        alert("Please enter both email and password");
+        return;
+      } else if(!user.email) {
+        alert("Please enter email");
+        return;
+      } else if(!user.password) {
+        alert("Please enter password");
+        return;
+      }
+
       const response = await axios.post(url, {
         "email": user.email,
         "password": user.password,
-      });
+      });  
+
       console.log(response.data);
       //salvare user
-      console.log(response.status)
-      navigation.navigate('Register');
+
+      navigation.navigate('Home');
+      
     } catch (error) {
-      console.error(error);
+      alert(error.response.data);
     }
   }
 
