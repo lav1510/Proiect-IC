@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import axios from 'axios'
+import setStringAsync from '../Storage/native';
+
 
 
 function Login({navigation}) {
@@ -16,9 +18,11 @@ function Login({navigation}) {
     email: "",
     password: ""
   });
+    
+  const ACCESS_TOKEN_KEY = 'IC_ACCESS_TOKEN';
 
   const handleLogin = async () => {
-    const url = 'http://172.20.10.2:5000/api/login';
+    const url = 'http://your_IP:5000/api/login';
     try {
 
       if(!user.email & !user.password){
@@ -35,12 +39,17 @@ function Login({navigation}) {
       const response = await axios.post(url, {
         "email": user.email,
         "password": user.password,
-      });  
-
-      console.log(response.data);
+      }).then((response) => {
+        console.log(response.data);
       //salvare user
+      console.log(response.data.token); //te asiguri ca tokenul arata bine
+      //make token visible across all screens ?
+      //save token
+      setStringAsync(response.data.token);
 
-      navigation.navigate('Home');
+      navigation.navigate('Register');
+    }).catch((err)=>alert(err))
+     
       
     } catch (error) {
       alert(error.response.data);

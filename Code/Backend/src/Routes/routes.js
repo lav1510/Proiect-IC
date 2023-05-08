@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {createNewUser, authenticateUser} = require ("../Controllers/UserController");
+const {createNewUser, authenticateUser, loggedoutUser} = require ("../Controllers/UserController");
 const auth = require("./../middleware/auth");
 
 //protected route
@@ -23,6 +23,26 @@ router.post("/login",async (req, res) =>{
         const authenticatedUser = await authenticateUser({email, password});
 
         res.status(200).json(authenticatedUser);
+    }catch(error){
+        res.status(400).send(error.message);
+    }
+});
+
+//Logout
+router.post("/logout",async (req, res) =>{
+    try{
+        let emailout = req.body;
+
+        //emailout = emailout.trim();
+
+        if(!(emailout)){
+            throw Error ("User not found!");
+        } 
+
+        const signedoutUser= await loggedoutUser(emailout);
+
+
+        res.status(200).json(signedoutUser);
     }catch(error){
         res.status(400).send(error.message);
     }

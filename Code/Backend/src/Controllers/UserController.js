@@ -25,7 +25,33 @@ const authenticateUser = async (data) => {
 
         //assign user token
         fetchedUser.token = token;
+        await User.findOneAndUpdate(
+            {email : email},
+            {token : token}
+        )
+    
         return fetchedUser;
+    }catch (error){
+        throw error;
+    }
+}
+
+const loggedoutUser = async (data) => {
+    try {
+        const {email} = data;
+
+       let singout = await User.findOneAndUpdate(
+            {email : email},
+            {token : null}
+        )
+
+        while(singout.token != null){
+            singout = await User.findOneAndUpdate(
+            {email : email},
+            {token : null}
+        )}
+
+        return singout;
     }catch (error){
         throw error;
     }
@@ -61,4 +87,4 @@ const createNewUser = async (data) => {
     }
 };
 
-module.exports = {createNewUser, authenticateUser}
+module.exports = {createNewUser, authenticateUser, loggedoutUser}
