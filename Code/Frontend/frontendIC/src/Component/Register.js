@@ -21,7 +21,7 @@ const [user, setUser] = useState({
 })
 
 const handleRegister = async () => {
-  const url = 'http://172.20.10.2:5000/api/signup';
+  const url = 'http://192.168.0.100:5000/api/signup';
   var validator = require("email-validator");
 
   if(user.name ||  user.password || user.email || user.confirmpass){
