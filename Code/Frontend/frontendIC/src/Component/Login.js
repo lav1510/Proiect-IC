@@ -9,16 +9,21 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import axios from 'axios'
+import { useNavigation } from '@react-navigation/native';
+import { useLogin } from "../context/LoginProvider";
 
 
-function Login({navigation}) {
+function Login() {
+  const {setIsLoggedIn} = useLogin();
   const [user, setUser] = useState({
     email: "",
     password: ""
   });
 
+  const navigation = useNavigation();
+  
   const handleLogin = async () => {
-    const url = 'http://172.20.10.2:5000/api/login';
+    const url = 'http://192.168.0.100:5000/api/login';
     try {
 
       if(!user.email & !user.password){
@@ -35,12 +40,13 @@ function Login({navigation}) {
       const response = await axios.post(url, {
         "email": user.email,
         "password": user.password,
-      });  
+      }
+      );
+
+      setIsLoggedIn(true);
 
       console.log(response.data);
       //salvare user
-
-      navigation.navigate('Home');
       
     } catch (error) {
       alert(error.response.data);
