@@ -110,6 +110,24 @@ router.post("/newevent",async (req, res) =>{
     }
 });
 
+//Get Events
+router.get("/allevents", async (req, res) => {
+    try{
+    let events =  await Event.find({})
+    if(!events)
+    {
+       throw Error("There are no events.");
+        
+    }
+    
+    res.send(events) //nu are fav
+
+    }catch(error){
+        res.status(400).send(error.message);
+    }
+
+});
+
 //New Contact Message
 router.post("/newcontact", auth, async (req, res) =>{
     try{
