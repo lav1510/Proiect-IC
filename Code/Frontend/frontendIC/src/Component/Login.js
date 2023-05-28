@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -7,26 +7,55 @@ import {
   Text,
   TextInput,
 } from "react-native";
-
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import axios from 'axios'
+import { useNavigation } from '@react-navigation/native';
+import { useLogin } from "../context/LoginProvider";
 
-function Login({navigation}) {
-    //snipet from https://github.com/IsAmitprajapati/Login-Register---MERN-Stack-MongoDB-express-React-js-Nodejs---2022/blob/main/frontend/src/Component/Login.js
 
+function Login() {
+  const {setIsLoggedIn} = useLogin();
   const [user, setUser] = useState({
     email: "",
     password: ""
-})
+  });
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setUser((preve) => {
-      return {
-          ...preve,
-          [name]: value
+  const navigation = useNavigation();
+  
+  const handleLogin = async () => {
+    const url = 'http://192.168.0.100:5000/api/login';
+    try {
+
+      if(!user.email & !user.password){
+        alert("Please enter both email and password");
+        return;
+      } else if(!user.email) {
+        alert("Please enter email");
+        return;
+      } else if(!user.password) {
+        alert("Please enter password");
+        return;
       }
-  })
-}
+
+      const response = await axios.post(url, {
+        "email": user.email,
+        "password": user.password,
+      }
+      );
+
+      setIsLoggedIn(true);
+
+      console.log(response.data);
+      //salvare user
+      
+    } catch (error) {
+      alert(error.response.data);
+    }
+  }
+
+  const handleChange = (name, value) => {
+    setUser(prevState => ({ ...prevState, [name]: value }));
+  }
 
   return (
     <KeyboardAwareScrollView
@@ -37,52 +66,52 @@ const handleChange = (e) => {
     >
       <View style={styles.container}>
         <View style={styles.backgroudimageStack}>
-            <Text style={styles.title}>Login</Text>
-            <Text style={styles.emaillabel}>E-mail</Text>
-            <View style={styles.emailbox}>
-              <TextInput
-                placeholder="E-mail"
-                returnKeyType="next"
-                onSubmitEditing={() => this.passwordRef.focus()}
-                style={styles.predefinedemailtext}
-                placeholderTextColor="rgba(187,187,187,1)"
-                onChange={handleChange}
-              ></TextInput>
-            </View>
-            <Text style={styles.passlabel}> Password</Text>
-            <View style={styles.passbox}>
-              <TextInput
-                placeholder="Password"
-                ref={passwordRef => (this.passwordRef = passwordRef)}
-                returnKeyType="done"
-                autoCorrect={false}
-                style={styles.predefinedpasstext}
-                placeholderTextColor="rgba(187,187,187,1)"
-                onChange={handleChange}
-                secureTextEntry={true}
-              ></TextInput>
-            </View>
-            <View style={styles.group1}>
-              <View style={styles.buttonbox}>
-                <View style={styles.group2}>
-                  <Text style={styles.buttonlabel}>Login</Text>
-                </View>
+          <Text style={styles.title}>Login</Text>
+          <Text style={styles.emaillabel}>E-mail</Text>
+          <View style={styles.emailbox}>
+            <TextInput
+              placeholder="E-mail"
+              returnKeyType="next"
+              onSubmitEditing={() => passwordRef.focus()}
+              style={styles.predefinedemailtext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              onChangeText={value => handleChange("email", value)}
+              value={user.email}
+            />
+          </View>
+          <Text style={styles.passlabel}> Password</Text>
+          <View style={styles.passbox}>
+            <TextInput
+              placeholder="Password"
+              ref={ref => passwordRef = ref}
+              returnKeyType="done"
+              autoCorrect={false}
+              style={styles.predefinedpasstext}
+              placeholderTextColor="rgba(187,187,187,1)"
+              secureTextEntry={true}
+              onChangeText={value => handleChange("password", value)}
+              value={user.password}
+            />
+          </View>
+          <View style={styles.group1}>
+            <View style={styles.buttonbox}>
+              <View style={styles.group2}>
+                <Text style={styles.buttonlabel} onPress={handleLogin}>Login</Text>
               </View>
             </View>
-            <View style={styles.questionRow}>
-              <Text style={styles.question}>Don't have account?</Text>
-              <Text style={styles.gotoregister} onPress={() => navigation.navigate('Register')}>Register now!</Text>
-            </View>
+          </View>
+          <View style={styles.questionRow}>
+            <Text style={styles.question}>Don't have an account?</Text>
+            <Text style={styles.gotoregister} onPress={() => navigation.navigate('Register')}>Register now!</Text>
+          </View>
           <Image
             source={require("../../public/Logo.jpeg")}
             resizeMode="contain"
             style={styles.logo}
-          ></Image>
+          />
         </View>
       </View>
     </KeyboardAwareScrollView>
-
-    
   );
 }
 
@@ -119,7 +148,7 @@ const styles = StyleSheet.create({
   predefinedemailtext: {
     color: "#121212",
     fontSize: 20,
-    width: 210,
+    width: 243,
     height: 25,
     marginTop: 5,
     marginLeft: 9
@@ -144,7 +173,7 @@ const styles = StyleSheet.create({
   predefinedpasstext: {
     color: "#121212",
     fontSize: 20,
-    width: 210,
+    width: 243,
     height: 25,
     marginTop: 6,
     marginLeft: 9

@@ -10,23 +10,48 @@ import {
 } from "react-native";
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import axios from 'axios'
 
-function Register() {
+function Register({navigation}) {
 const [user, setUser] = useState({
   name: "",
   email: "",
   password: "",
-  confirmpassword: ""
+  confirmpass:""
 })
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setUser((preve) => {
-      return {
-          ...preve,
-          [name]: value
+const handleRegister = async () => {
+  const url = 'http://192.168.0.100:5000/api/signup';
+  var validator = require("email-validator");
+
+  if(user.name ||  user.password || user.email || user.confirmpass){
+    if(validator.validate(user.email)){
+      if(user.password == user.confirmpass){
+        try {
+          const response = await axios.post(url, {
+            "name": user.name,
+            "email": user.email,
+            "password": user.password
+          });  
+          alert("Registration was successfully");
+          navigation.navigate('Login');
+        } catch (error) {
+          alert(error.response.data);
+        }
+          
+      } else {
+        alert("Check your password!")
       }
-  })
+    } else {
+        alert("Check your email!")
+    }
+  }
+
+ 
+}
+
+const handleChange = (name, value) => {
+  setUser(prevState => ({ ...prevState, [name]: value }));
 }
 
   return (
@@ -55,7 +80,8 @@ const handleChange = (e) => {
               onSubmitEditing={() => this.emailRef.focus()}
               style={styles.predefinednametext}
               placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
+              onChangeText={value => handleChange("name", value)}
+              value={user.name}
             ></TextInput>
           </View>
           <View style={styles.group1}>
@@ -70,7 +96,8 @@ const handleChange = (e) => {
               onSubmitEditing={() => this.passwordRef.focus()}
               style={styles.predefinedemailtext}
               placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
+              onChangeText={value => handleChange("email", value)}
+              value={user.email}
             ></TextInput>
           </View>
           <Text style={styles.passlabel}>Password</Text>
@@ -83,7 +110,8 @@ const handleChange = (e) => {
               autoCorrect={false}
               style={styles.predefinedpasstext}
               placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
+              onChangeText={value => handleChange("password", value)}
+              value={user.password}
               secureTextEntry={true}
             ></TextInput>
           </View>
@@ -96,14 +124,15 @@ const handleChange = (e) => {
               autoCorrect={false}
               style={styles.predefinedpassconfirmtext}
               placeholderTextColor="rgba(187,187,187,1)"
-              onChange={handleChange}
+              onChangeText={value => handleChange("confirmpass", value)}
+              value={user.confirmpass}
               secureTextEntry={true}
             ></TextInput>
           </View>
           <View style={styles.group2}>
             <View style={styles.buttonbox}>
               <View style={styles.group3}>
-                <Text style={styles.buttonlabel}>Register</Text>
+                <Text style={styles.buttonlabel} onPress={handleRegister}>Register</Text>
               </View>
             </View>
           </View>
