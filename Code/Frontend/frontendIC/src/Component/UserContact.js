@@ -1,14 +1,95 @@
-import * as React from 'react';
-import {View, Text} from 'react-native';
+import React, { Component } from "react";
+import { StyleSheet, View, Image, TextInput, Text, Button, Alert, Keyboard } from "react-native";   
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 function UserContact({navigation}){
-    return (
-        <View style={{flex:1, alignItems:'center',justifyContent:'center'}}>
-            <Text
-                onPress={() => navigation.navigate('Home')}
-                style={{fontSize:26, fontWeight: 'bold'}}> Contact Screen</Text>
-        </View>
-    );
-}
 
+      return (
+        <KeyboardAwareScrollView
+            style={{ backgroundColor: '#fff' }}
+            resetScrollToCoords={{ x: 0, y: 0 }}
+            contentContainerStyle={styles.container}
+            scrollEnabled={false}>
+            <Image style={styles.image} source={require('../../public/Logo.jpeg')} resizeMode="contain"/>
+            <Text style={styles.title}> Contact Us! </Text>
+            <View style={styles.centeredView}>
+                <TextInput
+                    placeholder={'Subiect'}
+                    style={styles.input1}
+                    placeholderTextColor="#8c8c8c"
+                    
+                />
+                <TextInput
+                    placeholder={'Mesaj...'}
+                    multiline={true}
+                    onSubmitEditing={Keyboard.dismiss}
+                    style={styles.input2}
+                    placeholderTextColor="#8c8c8c"
+                    
+                />
+                <View style={styles.buttonbox}>
+                    <Button title='Submit' onPress={() => Alert.alert('Done')} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                </View>
+            </View>
+        </KeyboardAwareScrollView>
+      );
+    }
+
+    
+    const styles = StyleSheet.create({
+       container: {
+          flex: 1,
+          backgroundColor: '#fff',
+      },
+      image: {
+        width: 100,
+        height: 60,
+        position: "absolute"
+      },
+      title:{
+        color: "rgba(208,2,27,1)",
+        fontSize: 30,
+        textAlign: 'center',
+        marginTop: 60
+      },
+      input1: {
+        width: 300,
+        height: 50,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(208,2,27,1)',
+        marginBottom: 10,
+        marginTop: 50,
+        borderRadius: 10,
+        color: '#000000'
+      }, 
+      input2: {
+        width: 300,
+        height: 200,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(208,2,27,1)',
+        marginBottom: 10,
+        marginTop: 20,
+        borderRadius: 10,
+        color: '#000000'
+      },
+      centeredView:{
+        alignItems: 'center'
+      },
+      buttonbox: { 
+        width: 130,
+        backgroundColor: 'rgba(208,2,27,1)',
+        borderRadius: 10,
+        padding: 0,
+        shadowOffset: {
+            width: 0,
+            height: 10
+        },
+        shadowRadius: 10,
+        marginTop: 60,
+        alignItems: 'center'
+    },
+      });
+    
 export default UserContact;
