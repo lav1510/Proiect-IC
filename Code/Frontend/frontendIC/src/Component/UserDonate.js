@@ -2,9 +2,83 @@ import React, {useState} from 'react';
 import {Alert, Button, TextInput, View, StyleSheet, Text, Modal, Pressable, Image} from 'react-native';
 import NumericInput from 'react-native-numeric-input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import * as SecureStore from 'expo-secure-store';
+import axios from 'axios'
 
 function UserDonate(){
     const [modalVisible, setModalVisible] = useState(false);
+
+    const getTokenFromStorage = async () => {
+      const token = await SecureStore.getItemAsync('token');
+      return token;
+    };
+  
+    const [donate, setDonate] = useState({
+      amount: "",
+      card_number: "",
+      charholder_name: "",
+      cvc: "",
+      exp_date: "",
+    });
+  
+    const handleSubmit = async () => {
+      const token = await getTokenFromStorage(); 
+  
+      if (!token) {
+        alert("An error ocured. It seems you are not logged in.");
+      }
+      const url = 'http://192.168.43.106:5000/api/newdonation';
+      try {
+  
+        if(!donate.amount && !donate.card_number && !donate.charholder_name && !donate.cvc && !donate.exp_date){
+          alert("Please complete all fields");
+          return;
+        } else if(!donate.card_number) {
+          alert("Please enter card number");
+          return;
+        } else if(!donate.charholder_name) {
+          alert("Please enter cardholder name");
+          return;
+        } else if(!donate.cvc) {
+          alert("Please enter CVC");
+          return;
+        } else if(!donate.exp_date) {
+          alert("Please enter expiration date");
+          return;
+        }
+  
+        console.log(donate);
+        const response = await axios.post(url, {
+          "token": token,
+          "amount": donate.amount,
+          "card_number": donate.card_number,
+          "charholder_name": donate.charholder_name,
+          "cvc": donate.cvc,
+          "exp_date": donate.exp_date
+        }
+        );
+
+        console.log(response.data);
+        setDonate({
+          amount: "",
+          card_number: "",
+          charholder_name: "",
+          cvc: "",
+          exp_date: ""
+        });
+
+        alert('Thank you for your donation!')
+        setModalVisible(!modalVisible);
+        
+      } catch (error) {
+        alert(error.response.data);
+      }
+    }
+  
+    const handleChange = (name, value) => {
+      setDonate(prevState => ({ ...prevState, [name]: value }));
+    }
+
     return (
         <KeyboardAwareScrollView
             style={{ backgroundColor: '#fff' }}
@@ -14,7 +88,7 @@ function UserDonate(){
             <View style={styles.container}>
                 <Image style={styles.image} source={require('../../assets/donate.png')} />
                 <Text style={styles.title}> Donează și tu! </Text>
-                <Text style={styles.paragraph}>Puteți să donați orice sumă doriți începând cu suma minimă de 5 RONs. Pentru sume mai mici de 5 RON, puteți dona direct în contul asociației Action for People RO19BRDE160SV45551251600.</Text>
+                <Text style={styles.paragraph}>Puteți să donați orice sumă doriți începând cu suma minimă de 5 RON. Pentru sume mai mici de 5 RON, puteți dona direct în contul asociației Action for People RO19BRDE160SV45551251600.                               De asemenea, puteți dona și jucării, haine sau alimente neperisabile. În acest caz, trimiteți-ne mesaj pe pagina de contact pentru a le prelua.</Text>
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -27,21 +101,22 @@ function UserDonate(){
                             <Text style={styles.modalText}>Donate Form</Text>
                             <Text style={styles.textStyleamount}>Amount </Text>
                             <View style={styles.centeredView}>
-                                <NumericInput
-                                    onLimitReached={(isMax,msg) => console.log(isMax,msg)}
-                                    totalWidth={200} 
-                                    totalHeight={50} 
-                                    iconSize={25}
-                                    step={1}
-                                    valueType='real'
-                                    rounded 
-                                    textColor='black' 
-                                    iconStyle={{ color: 'white' }} 
-                                    rightButtonBackgroundColor='#e3021d' 
-                                    leftButtonBackgroundColor='#ff4d4d'
-                                    minValue={0}
-                                    alignItems='center'
-                                    />
+                            <NumericInput
+                                onLimitReached={(isMax,msg) => console.log(isMax,msg)}
+                                totalWidth={200} 
+                                totalHeight={50} 
+                                iconSize={25}
+                                step={1}
+                                valueType='real'
+                                rounded 
+                                textColor='black' 
+                                iconStyle={{ color: 'white' }} 
+                                rightButtonBackgroundColor='#e3021d' 
+                                leftButtonBackgroundColor='#ff4d4d'
+                                minValue={0}
+                                alignItems='center'
+                                onChange={value => handleChange("amount", value)}
+                            />
                             </View>
                             <Text style={styles.textStyleamount}>Card information </Text>
                             <View style={styles.centeredView}>
@@ -51,6 +126,7 @@ function UserDonate(){
                                     placeholderTextColor="#8c8c8c"
                                     returnKeyType="next"
                                     onSubmitEditing={() => nameRef.focus()}
+                                    onChangeText={value => handleChange("card_number", value)}
                                     />
                                 <TextInput
                                     placeholder={'Cardholder name'}
@@ -59,14 +135,15 @@ function UserDonate(){
                                     returnKeyType="next"
                                     ref={nameRef => (this.nameRef = nameRef)}
                                     onSubmitEditing={() => cvcRef.focus()}
+                                    onChangeText={value => handleChange("charholder_name", value)}
                                     />
                                 <View style={styles.textInputRow}>
-                                    <TextInput placeholder="CVC" style={styles.input3} placeholderTextColor="#8c8c8c" returnKeyType="next" ref={cvcRef => (this.cvcRef = cvcRef)} onSubmitEditing={() => mmyyRef.focus()}></TextInput>
-                                    <TextInput placeholder="MM/YY" style={styles.input4} placeholderTextColor="#8c8c8c" returnKeyType="done" ref={mmyyRef => (this.mmyyRef = mmyyRef)}></TextInput>
+                                    <TextInput placeholder="CVC" style={styles.input3} placeholderTextColor="#8c8c8c" returnKeyType="next" ref={cvcRef => (this.cvcRef = cvcRef)} onSubmitEditing={() => mmyyRef.focus()} onChangeText={value => handleChange("cvc", value)}></TextInput>
+                                    <TextInput placeholder="MM/YY" style={styles.input4} placeholderTextColor="#8c8c8c" returnKeyType="done" ref={mmyyRef => (this.mmyyRef = mmyyRef)} onChangeText={value => handleChange("exp_date", value)}></TextInput>
                                 </View>
 
                                 <View style={styles.buttonbox}>
-                                    <Button title='Donate' onPress={() => Alert.alert('Done')} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                                    <Button title='Donate' onPress={handleSubmit} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
                                 </View>
                                 <Pressable
                                     style={[styles.buttonback, styles.buttonClose]}
