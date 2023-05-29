@@ -1,9 +1,11 @@
-import { SecureStore } from 'expo-secure-store';
-import React, { Component } from "react";
+import * as SecureStore from 'expo-secure-store';
+import React, { Component, useState } from "react";
 import { StyleSheet, View, Image, TextInput, Text, Button, Alert, Keyboard } from "react-native";   
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import axios from 'axios'
 
-function UserContact({navigation}){
+function UserContact(){
+
   const getTokenFromStorage = async () => {
     const token = await SecureStore.getItemAsync('token');
     return token;
@@ -20,7 +22,7 @@ function UserContact({navigation}){
     if (!token) {
       alert("An error ocured. It seems you are not logged in.");
     }
-    const url = 'http://IP:5000/api/newcontact';
+    const url = 'http://192.168.43.106:5000/api/newcontact';
     try {
 
       if(!contact.title & !contact.message){
@@ -40,8 +42,10 @@ function UserContact({navigation}){
         "message": contact.message,
       }
       );
-
+      
       console.log(response.data);
+
+      
       
     } catch (error) {
       alert(error.response.data);
@@ -74,11 +78,11 @@ function UserContact({navigation}){
                     onSubmitEditing={Keyboard.dismiss}
                     style={styles.input2}
                     placeholderTextColor="#8c8c8c"
-                    onChangeText={value => handleChange("messge", value)}
+                    onChangeText={value => handleChange("message", value)}
                     value={contact.message}
                 />
                 <View style={styles.buttonbox}>
-                    <Button title='Submit' onPress={() => Alert.alert('Done')} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                    <Button title='Submit' onPress={handleSubmit} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
                 </View>
             </View>
         </KeyboardAwareScrollView>
