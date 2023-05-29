@@ -43,9 +43,9 @@ function UserContact(){
       }
       );
       
+      setContact({ title: '', message: '' });
       console.log(response.data);
-
-      
+      alert('Thank you for your message!')
       
     } catch (error) {
       alert(error.response.data);
