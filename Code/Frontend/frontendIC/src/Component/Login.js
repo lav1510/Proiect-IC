@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SecureStore } from 'expo-secure-store';
 import {
   StyleSheet,
   View,
@@ -43,6 +44,7 @@ function Login() {
       }
       );
 
+      await SecureStore.setItemAsync('token', response.data.token);
       setIsLoggedIn(true);
 
       console.log(response.data);

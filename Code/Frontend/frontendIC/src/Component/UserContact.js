@@ -1,127 +1,149 @@
-import React, { Component } from "react";
-import { StyleSheet, View, Image, TextInput } from "react-native";   
+import * as SecureStore from 'expo-secure-store';
+import React, { Component, useState } from "react";
+import { StyleSheet, View, Image, TextInput, Text, Button, Alert, Keyboard } from "react-native";   
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import axios from 'axios'
 
-function UserContact({navigation}){
+function UserContact(){
 
+  const getTokenFromStorage = async () => {
+    const token = await SecureStore.getItemAsync('token');
+    return token;
+  };
+
+  const [contact, setContact] = useState({
+    title: "",
+    message: ""
+  });
+
+  const handleSubmit = async () => {
+    const token = await getTokenFromStorage(); 
+
+    if (!token) {
+      alert("An error ocured. It seems you are not logged in.");
+    }
+    const url = 'http://192.168.43.106:5000/api/newcontact';
+    try {
+
+      if(!contact.title & !contact.message){
+        alert("Please enter both title and message");
+        return;
+      } else if(!contact.title) {
+        alert("Please enter title");
+        return;
+      } else if(!contact.message) {
+        alert("Please enter message");
+        return;
+      }
+
+      const response = await axios.post(url, {
+        "token": token,
+        "title": contact.title,
+        "message": contact.message,
+      }
+      );
+      
+      console.log(response.data);
+
+      
+      
+    } catch (error) {
+      alert(error.response.data);
+    }
+  }
+
+  const handleChange = (name, value) => {
+    setContact(prevState => ({ ...prevState, [name]: value }));
+  }
+  
       return (
-        <View style={styles.container}>
-          <View style={styles.logo1Stack}>
-            <Image
-              source={require("../../public/Logo.jpeg")}
-              resizeMode="contain"
-              style={styles.logo1}
-            ></Image>
-            <TextInput
-              placeholder="Contact US"
-              placeholderTextColor="rgba(0,0,0,1)"
-              style={styles.title1}
-            ></TextInput>
-          </View>
-          <View style={styles.rect}>
-            <TextInput placeholder="Title" style={styles.textInput}></TextInput>
-          </View>
-          <View style={styles.rect2}>
-            <TextInput
-              placeholder="Message"
-              numberOfLines={1}
-              style={styles.textInput1}
-            ></TextInput>
-          </View>
-          <View style={styles.group1}>
-            <View style={styles.buttonbox1}>
-              <TextInput
-                placeholder="Contact US"
-                placeholderTextColor="rgba(0,0,0,1)"
-                style={styles.textInput2}
-              ></TextInput>
+        <KeyboardAwareScrollView
+            style={{ backgroundColor: '#fff' }}
+            resetScrollToCoords={{ x: 0, y: 0 }}
+            contentContainerStyle={styles.container}
+            scrollEnabled={false}>
+            <Image style={styles.image} source={require('../../public/Logo.jpeg')} resizeMode="contain"/>
+            <Text style={styles.title}> Contact Us! </Text>
+            <View style={styles.centeredView}>
+                <TextInput
+                    placeholder={'Subiect'}
+                    style={styles.input1}
+                    placeholderTextColor="#8c8c8c"
+                    onChangeText={value => handleChange("title", value)}
+                    value={contact.title}
+                />
+                <TextInput
+                    placeholder={'Mesaj...'}
+                    multiline={true}
+                    onSubmitEditing={Keyboard.dismiss}
+                    style={styles.input2}
+                    placeholderTextColor="#8c8c8c"
+                    onChangeText={value => handleChange("message", value)}
+                    value={contact.message}
+                />
+                <View style={styles.buttonbox}>
+                    <Button title='Submit' onPress={handleSubmit} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                </View>
             </View>
-          </View>
-        </View>
+        </KeyboardAwareScrollView>
       );
     }
 
     
     const styles = StyleSheet.create({
-        container: {
-          flex: 1
+       container: {
+          flex: 1,
+          backgroundColor: '#fff',
+      },
+      image: {
+        width: 100,
+        height: 60,
+        position: "absolute"
+      },
+      title:{
+        color: "rgba(208,2,27,1)",
+        fontSize: 30,
+        textAlign: 'center',
+        marginTop: 60
+      },
+      input1: {
+        width: 300,
+        height: 50,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(208,2,27,1)',
+        marginBottom: 10,
+        marginTop: 50,
+        borderRadius: 10,
+        color: '#000000'
+      }, 
+      input2: {
+        width: 300,
+        height: 200,
+        padding: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(208,2,27,1)',
+        marginBottom: 10,
+        marginTop: 20,
+        borderRadius: 10,
+        color: '#000000'
+      },
+      centeredView:{
+        alignItems: 'center'
+      },
+      buttonbox: { 
+        width: 130,
+        backgroundColor: 'rgba(208,2,27,1)',
+        borderRadius: 10,
+        padding: 0,
+        shadowOffset: {
+            width: 0,
+            height: 10
         },
-        logo1: {
-          top: 0,
-          left: 0,
-          width: 113,
-          height: 96,
-          position: "absolute"
-        },
-        title1: {
-          top: 65,
-          position: "absolute",
-          fontFamily: "comic-sans-ms-regular",
-          color: "rgba(0,0,0,1)",
-          fontSize: 32,
-          width: 304,
-          height: 62,
-          textAlign: "center",
-          left: 37
-        },
-        logo1Stack: {
-          width: 341,
-          height: 127,
-          marginTop: -8,
-          marginLeft: -2
-        },
-        rect: {
-          width: 316,
-          height: 34,
-          backgroundColor: "rgba(255,246,246,1)",
-          marginTop: 35,
-          marginLeft: 21
-        },
-        textInput: {
-          fontFamily: "calibri-regular",
-          color: "rgba(187,187,187,1)",
-          fontSize: 20,
-          width: 311,
-          height: 34,
-          marginLeft: 5
-        },
-        rect2: {
-          width: 311,
-          height: 272,
-          backgroundColor: "rgba(255,245,245,1)",
-          marginTop: 36,
-          marginLeft: 26
-        },
-        textInput1: {
-          fontFamily: "calibri-regular",
-          color: "rgba(235,37,37,1)",
-          fontSize: 20,
-          width: 294,
-          height: 28,
-          textAlign: "justify",
-          lineHeight: 0,
-          marginTop: 10,
-          marginLeft: 7
-        },
-        group1: {
-          width: 130,
-          height: 37,
-          marginTop: 10,
-          marginLeft: 122
-        },
-        buttonbox1: {
-          width: 130,
-          height: 37,
-          backgroundColor: "rgba(208,2,27,1)"
-        },
-        textInput2: {
-          fontFamily: "roboto-regular",
-          color: "#121212",
-          fontSize: 19,
-          width: 99,
-          height: 24,
-          marginTop: 6,
-          marginLeft: 16
-        }
+        shadowRadius: 10,
+        marginTop: 60,
+        alignItems: 'center'
+    },
       });
     
 export default UserContact;
