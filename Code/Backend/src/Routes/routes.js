@@ -191,21 +191,33 @@ router.post("/newvolunteer", auth, async (req, res) =>{
 //New Donation
 router.post("/newdonation", auth, async (req, res) =>{
     try{
-        let {token, message, IBAN, sum} = req.body;
+        let {token, amount, card_number, charholder_name, cvc, exp_date } = req.body;
         
-        if(!(IBAN&&sum&&token)){
+        if(!(token&&amount&&card_number&&charholder_name&&cvc&&exp_date)){
             throw Error ("Empty input fields!");
         } else {
-            if(sum <= 0){
+            if(amount < 5){
                 throw Error("Invalid amount.");
+            }
+
+            if(card_number <= 999999999999999){
+                throw Error("Please provide a valid card number.");
+            }
+            if(exp_date <= 99 || exp_date > 1299){
+                throw Error("Please provide a valid expiration date.");
+            }
+            if(cvc <= 99){
+                throw Error("Please provide a valid CVC.");
             }
 
             const decodedToken = await jwt.verify(token, TOKEN_KEY);
             
             const newDonation = new Donation ({
-                message : message,
-                IBAN : IBAN,
-                sum : sum,
+                amount:amount,
+                card_number : card_number,
+                charholder_name : charholder_name,
+                cvc : cvc,
+                exp_date : exp_date,
                 user: decodedToken.email
             });
     
