@@ -1,10 +1,11 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {Alert, Button, TextInput, View, StyleSheet, Text, Modal, Pressable, Image} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import SelectDropdown from 'react-native-select-dropdown'
+import axios from 'axios'
 
-function UserVolunteer({navigation}){
-    const tShirt = ["M", "L", "XL"]
+function UserVolunteer(){
+    const tShirt = ["S","M", "L", "XL"]
     const getTokenFromStorage = async () => {
       const token = await SecureStore.getItemAsync('token');
       return token;
@@ -21,7 +22,7 @@ function UserVolunteer({navigation}){
       if (!token) {
         alert("An error ocured. It seems you are not logged in.");
       }
-      const url = 'http://my_ip:5000/api/newvolunteer';
+      const url = 'http://192.168.43.106:5000/api/newvolunteer';
       try {
   
         if(!volunteer.motive & !volunteer.tshirtsize){
@@ -48,7 +49,11 @@ function UserVolunteer({navigation}){
         
         
       } catch (error) {
-        alert(error.response.data);
+        if (error.response && error.response.data) {
+          alert(error.response.data);
+        } else {
+          alert('An error occurred. Please try again later.');
+        }
       }
     }
   
@@ -72,22 +77,19 @@ function UserVolunteer({navigation}){
             </View>
             <Text style={styles.textStyletShirt}>Alege mărimea tricoului!</Text>
             <View style={styles.centeredView}>
-                <SelectDropdown
-                    data={tShirt}
-                    onSelect={(selectedItem, index) => {
-                      setVolunteer(prevState => ({
-                        ...prevState,
-                        tshirtsize: selectedItem
-                      }));
-                    }}
-                    buttonTextAfterSelection={(selectedItem, index) => {
-                    setVolunteer(prevState => ({
-                      ...prevState,
-                      tshirtsize: selectedItem
-                    }));
-
-                    return selectedItem;}}
-                />
+            <SelectDropdown
+  data={tShirt}
+  onSelect={(selectedItem, index) => {
+    const updatedVolunteer = {
+      ...volunteer,
+      tshirtsize: selectedItem
+    };
+    setVolunteer(updatedVolunteer);
+  }}
+  buttonTextAfterSelection={(selectedItem, index) => {
+    return selectedItem;
+  }}
+/>
             
                 <View style={styles.buttonbox}>
                     <Button title='Be Volunteer' onPress={handleSubmit} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
