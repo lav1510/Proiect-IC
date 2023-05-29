@@ -1,9 +1,62 @@
 import * as React from 'react';
 import {Alert, Button, TextInput, View, StyleSheet, Text, Modal, Pressable, Image} from 'react-native';
+import * as SecureStore from 'expo-secure-store';
 import SelectDropdown from 'react-native-select-dropdown'
 
 function UserVolunteer({navigation}){
     const tShirt = ["M", "L", "XL"]
+    const getTokenFromStorage = async () => {
+      const token = await SecureStore.getItemAsync('token');
+      return token;
+    };
+  
+    const [volunteer, setVolunteer] = useState({
+      motive: "",
+      tshirtsize: ""
+    });
+
+    const handleSubmit = async () => {
+      const token = await getTokenFromStorage(); 
+  
+      if (!token) {
+        alert("An error ocured. It seems you are not logged in.");
+      }
+      const url = 'http://my_ip:5000/api/newvolunteer';
+      try {
+  
+        if(!volunteer.motive & !volunteer.tshirtsize){
+          alert("Please enter both message and tshirtsize");
+          return;
+        } else if(!volunteer.motive) {
+          alert("Please enter your message");
+          return;
+        } else if(!volunteer.tshirtsize) {
+          alert("Please select tshirtsize");
+          return;
+        }
+  
+        const response = await axios.post(url, {
+          "token": token,
+          "motive": volunteer.motive,
+          "tshirtsize": volunteer.tshirtsize,
+        }
+        );
+        
+        console.log(response.data);
+        setVolunteer({ motive: '', tshirtsize: '' });
+        alert('Thank you for your application!')
+        
+        
+      } catch (error) {
+        alert(error.response.data);
+      }
+    }
+  
+    const handleChange = (name, value) => {
+      setVolunteer(prevState => ({ ...prevState, [name]: value }));
+    }
+    
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}> Fii Voluntar! </Text>
@@ -13,6 +66,8 @@ function UserVolunteer({navigation}){
                                     placeholder={'Mesaj...'}
                                     style={styles.input1}
                                     placeholderTextColor="#8c8c8c"
+                                    onChangeText={value => handleChange("motive", value)}
+                                    value={volunteer.motive}
                                     />
             </View>
             <Text style={styles.textStyletShirt}>Alege mărimea tricoului!</Text>
@@ -20,19 +75,22 @@ function UserVolunteer({navigation}){
                 <SelectDropdown
                     data={tShirt}
                     onSelect={(selectedItem, index) => {
-                        console.log(selectedItem, index)
+                      setVolunteer(prevState => ({
+                        ...prevState,
+                        tshirtsize: selectedItem
+                      }));
                     }}
                     buttonTextAfterSelection={(selectedItem, index) => {
-                        
-                        return selectedItem
-                    }}
-                    rowTextForSelection={(item, index) => {
-                        return item
-                    }}
+                    setVolunteer(prevState => ({
+                      ...prevState,
+                      tshirtsize: selectedItem
+                    }));
+
+                    return selectedItem;}}
                 />
             
                 <View style={styles.buttonbox}>
-                    <Button title='Be Volunteer' onPress={() => Alert.alert('Done')} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
+                    <Button title='Be Volunteer' onPress={handleSubmit} color="#FFFFFF" accessibilityLabel="Tap on Me"/>
                 </View>
 
             <Image style={styles.image} source={require('../../assets/volunteer.png')} />
