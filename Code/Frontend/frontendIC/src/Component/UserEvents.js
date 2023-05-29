@@ -1,28 +1,39 @@
-//This is an example of Card View// 
-
-import React from 'react';
-//import react in our code. 
-
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-//import all the components we are going to use.
+import { Card, ListItem } from 'react-native-elements';
+import axios from 'axios';
 
-import { Card } from 'react-native-elements';
-//import Card
+function UserEvents() {
+  const [events, setEvents] = useState([]);
 
-function UserEvents(){
-  
-    return (
-      <View style={styles.container}>
-        <Card title="Local Modules" elevation={7}>
-        {/*react-native-elements Card*/}
-          <Text style={styles.paragraph}>
-            This is a card to display events
-            
-          </Text>
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.get('http://192.168.43.106:5000/api/allevents');
+      setEvents(response.data);
+    } catch (error) {
+      alert(error.response.data);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {events.map((event, index) => (
+        <Card key={index} containerStyle={styles.cardContainer} wrapperStyle={styles.cardWrapper}>
+          <Card.Title>{event.title}</Card.Title>
+          <Card.Divider />
+          <ListItem>
+            <ListItem.Content>
+              <ListItem.Subtitle style={styles.subtitle}>{event.description}</ListItem.Subtitle>
+            </ListItem.Content>
+          </ListItem>
         </Card>
-      </View>
-    );
-  
+      ))}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -31,14 +42,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 40,
-    backgroundColor: 'white',
+    backgroundColor: 'white'
   },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#34495e',
+  cardContainer: {
+    borderRadius: 10,
+    elevation: 7,
+    height: 250,
+    width: 350,
+    borderColor: 'red'
+  },
+  cardWrapper: {
+    paddingHorizontal: 10,
+    color: 'red'
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#555555',
   },
 });
 
