@@ -25,7 +25,7 @@ function UserHome(){
                 }} 
                 imageLoadingCOlor = "black" 
                 autoplay={true} 
-                circleLoop={true}
+                
                 />
             <Text style={styles.title1}>ACTIVITĂȚI</Text>
             <Text style={styles.title2}>Activitățile noastre</Text>
