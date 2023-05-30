@@ -11,7 +11,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native';
 import { useLogin } from "../context/LoginProvider";
-
+import * as SecureStore from 'expo-secure-store'
 
 function Login() {
   const {setIsLoggedIn} = useLogin();
@@ -23,7 +23,7 @@ function Login() {
   const navigation = useNavigation();
   
   const handleLogin = async () => {
-    const url = 'http://192.168.0.100:5000/api/login';
+    const url = 'http://192.168.43.106:5000/api/login';
     try {
 
       if(!user.email & !user.password){
@@ -43,6 +43,7 @@ function Login() {
       }
       );
 
+      await SecureStore.setItemAsync('token', response.data.token);
       setIsLoggedIn(true);
 
       console.log(response.data);
